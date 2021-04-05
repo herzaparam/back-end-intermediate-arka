@@ -12,7 +12,17 @@ const user = {
       })
     })
   },
-
+  getUserByToken: (email) => {
+    return new Promise((resolve, reject) => {
+      connection.query('SELECT * FROM user WHERE email = ?', email, (err, result) => {
+        if (!err) {
+          resolve(result)
+        } else {
+          reject(err)
+        }
+      })
+    })
+  },
   getUserById: (id) => {
     return new Promise((resolve, reject) => {
       connection.query('SELECT * FROM user WHERE user_Id = ?', id, (err, result) => {

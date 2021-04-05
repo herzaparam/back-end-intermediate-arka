@@ -1,6 +1,17 @@
 const connection = require('../config/db')
 
 const movies = {
+    getAllMovies: () => {
+        return new Promise((resolve, reject) => {
+            connection.query('SELECT * FROM movie_details ', (err, result) => {
+                if (!err) {
+                    resolve(result)
+                } else {
+                    reject(err)
+                }
+            })
+        })
+    },
     getAllNowMovies: () => {
         return new Promise((resolve, reject) => {
             connection.query('SELECT * FROM movie_details WHERE date_show ="now"', (err, result) => {
@@ -12,9 +23,9 @@ const movies = {
             })
         })
     },
-    getLimNowMovies: (limit, page) => {
+    getLimNowMovies: () => {
         return new Promise((resolve, reject) => {
-            connection.query(`SELECT * FROM movie_details WHERE date_show = 'now' LIMIT ${(limit * page) - limit}, ${limit} `, (err, result) => {
+            connection.query(`SELECT * FROM movie_details WHERE date_show = 'now' LIMIT 5 `, (err, result) => {
                 if (!err) {
                     resolve(result)
                 } else {
@@ -36,9 +47,9 @@ const movies = {
             })
         })
     },
-    getLimUpMovies: (limit, page) => {
+    getLimUpMovies: () => {
         return new Promise((resolve, reject) => {
-            connection.query(`SELECT * FROM movie_details WHERE date_show = 'upcoming' LIMIT ${(limit * page) - limit}, ${limit} `, (err, result) => {
+            connection.query(`SELECT * FROM movie_details WHERE date_show = 'upcoming' LIMIT 5`, (err, result) => {
                 if (!err) {
                     resolve(result)
                 } else {

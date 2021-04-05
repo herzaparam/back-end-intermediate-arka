@@ -6,6 +6,7 @@ const { cacheAllNowMovies, cacheAllUpMovies } = require('../middleware/redis')
 const { verifyAcces, roleAdmin } = require('../middleware/auth')
 
 router
+    .get('/all-movies', moviesController.getAllMovies)
     .get('/now-showing', moviesController.getLimNowMovies)
     .get('/now-showing/viewall', cacheAllNowMovies, moviesController.getAllNowMovies)
     .get('/upcoming-movies', moviesController.getLimUpMovies)

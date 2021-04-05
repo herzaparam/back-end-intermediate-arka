@@ -7,6 +7,19 @@ const jwt = require('jsonwebtoken')
 const helperEmail = require('../helper/mailer')
 const { NotExtended } = require('http-errors')
 
+exports.getUserByToken = (req, res) => {
+  const email = req.email
+  userModel.getUserByToken(email)
+    .then((result) => {
+      const user = result[0]
+      delete user.password
+      res.json({
+        user: user
+      })
+    }).catch((err) => {
+      console.log(err)
+    })
+}
 exports.getUserById = (req, res) => {
   const id = req.params.iduser
   userModel.getUserById(id)
@@ -52,7 +65,7 @@ exports.register = async (req, res) => {
     const { email, password } = req.body
     const result = await userModel.findUser(email)
     if (result.length !== 0) {
-      return helpers.response(res, null, 401, { email: 'email has already regitered!' })
+      return helpers.response(res, null, 409, {message: 'email has already regitered!' })
     }
     const user = {
       user_Id: uuidv4(),
@@ -74,11 +87,12 @@ exports.sendEmail = async (req, res) => {
   const email = req.body.email
   const resEmail = await helperEmail.sendEmail(email)
   console.log(resEmail);
-  return helpers.response(res, null, 200, { message: 'register will complete after you verify you email' })
+  return helpers.response(res, null, 200, null)
 }
 
-
 exports.updateUser = (req, res) => {
+  console.log(req.body);
+  console.log(req.file);
   const userId = req.params.iduser
   const { fname, lname, email, phone_number } = req.body
   const user = {
