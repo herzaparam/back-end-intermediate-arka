@@ -8,10 +8,13 @@ const { uploadMulter } = require('../middleware/uploadimg')
 router
   .get('/profil', userController.sendEmail)
   .get('/profile/:iduser', verifyAcces, userController.getUserById)
+  .get('/verify', userController.verify)
   .post('/profile', isLoggedIn, userController.getUserByToken)
-  .post('/register', userController.register)
+  .post('/register', uploadMulter.single('image'), userController.register)
   .post('/login', userController.login)
-  .put('/profile/:iduser',  uploadMulter.single('image'), userController.updateUser)
+  .post("/forgot-password", userController.forgotPassword)
+  .put("/reset-password", userController.resetPassword)
+  .put('/profile/:iduser', uploadMulter.single('image'), userController.updateUser)
   .delete('/:id', userController.deleteUser)
 
 module.exports = router

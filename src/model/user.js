@@ -1,10 +1,10 @@
 const connection = require('../config/db')
 
 const user = {
-  findUser: (email) =>{
-    return new Promise ((resolve, reject)=>{
-      connection.query('SELECT * FROM user WHERE email = ?', email, (err, result)=>{
-        if (!err){
+  findUser: (email) => {
+    return new Promise((resolve, reject) => {
+      connection.query('SELECT * FROM user WHERE email = ?', email, (err, result) => {
+        if (!err) {
           resolve(result)
         } else {
           reject(err)
@@ -49,14 +49,33 @@ const user = {
   },
   register: (user) => {
     return new Promise((resolve, reject) => {
-      connection.query('INSERT INTO user SET ?', user, (err, result) => {
-        if (!err) {
-          resolve(result)
-        } else {
-          reject(err)
-        }
-      })
+      connection.query('INSERT INTO user SET ?', user,
+        (err, result) => {
+          if (!err) {
+            connection.query("SELECT * FROM user WHERE email = ? ", user.email,
+              (err, result) => {
+                if (!err) {
+                  resolve(result)
+                } else {
+                  reject(new Error("Internal server error"))
+                }
+              })
+          } else {
+            reject(new Error("Internal server error"))
+          }
+        })
     })
+  },
+  createUsersToken: (data) => {
+    return new Promise((resolve, reject) => {
+      connection.query("INSERT INTO user_token SET ?", data, (err, result) => {
+        if (!err) {
+          resolve(result);
+        } else {
+          reject(new Error("Internal server error"));
+        }
+      });
+    });
   },
   updateUser: (userId, user) => {
     return new Promise((resolve, reject) => {
@@ -79,6 +98,81 @@ const user = {
         }
       })
     })
+  },
+  findToken: (token) => {
+    return new Promise((resolve, reject) => {
+      connection.query(
+        "SELECT token FROM user_token WHERE token = ?",
+        token,
+        (err, result) => {
+          if (!err) {
+            resolve(result);
+          } else {
+            reject(new Error("Internal server error"));
+          }
+        }
+      );
+    });
+  },
+  deleteToken: (email) => {
+    return new Promise((resolve, reject) => {
+      connection.query(
+        "DELETE FROM user_token WHERE email = ?",
+        email,
+        (err, result) => {
+          if (!err) {
+            resolve(result);
+          } else {
+            reject(new Error("Internal server error"));
+          }
+        }
+      );
+    });
+  },
+  setPassword: (password, email) => {
+    return new Promise((resolve, reject) => {
+      connection.query(
+        `UPDATE user SET password = ?, active = true WHERE email = ?`,
+        [password, email],
+        (err, result) => {
+          if (!err) {
+            resolve(result);
+          } else {
+            reject(new Error("Internal server error"));
+          }
+        }
+      );
+    });
+  },
+  deleteEmail: (email) => {
+    return new Promise((resolve, reject) => {
+      connection.query(
+        "DELETE FROM user WHERE email = ?",
+        email,
+        (err, result) => {
+          if (!err) {
+            resolve(result);
+          } else {
+            reject(new Error("Internal server error"));
+          }
+        }
+      );
+    });
+  },
+  setActive: (email) => {
+    return new Promise((resolve, reject) => {
+      connection.query(
+        "UPDATE user SET active = true WHERE email = ?",
+        email,
+        (err, result) => {
+          if (!err) {
+            resolve(result);
+          } else {
+            reject(new Error("Internal server error"));
+          }
+        }
+      );
+    });
   }
 }
 

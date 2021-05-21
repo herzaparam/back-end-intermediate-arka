@@ -6,7 +6,7 @@ const hashPassword = (password)=>{
                 if(!err){
                     resolve(hash)
                 }else{
-                    reject(err)
+                    reject(new Error("Internal server error"))
                 }
             })
         })
