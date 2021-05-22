@@ -1,9 +1,9 @@
 const connection = require('../config/db')
 
 const location = {
-  getLocation: () => {
+  getLocation: (city) => {
     return new Promise((resolve, reject) => {
-      connection.query('SELECT * FROM cinema_location', (err, result) => {
+      connection.query('SELECT cinemas.id, cinemas.name, cinemas.image, cinemas.address, cinemas.address, cinemas.price, cities.name AS cityName FROM cinemas iNNER JOIN cities ON cinemas.cityID = cities.id WHERE cities.name = ? ', city ,(err, result) => {
         if (!err) {
           resolve(result)
         } else {
@@ -14,7 +14,7 @@ const location = {
   },
   getLocationById: (id) => {
     return new Promise((resolve, reject) => {
-      connection.query('SELECT * FROM cinema_location WHERE location_Id = ?', id, (err, result) => {
+      connection.query('SELECT * FROM cinemas WHERE location_Id = ?', id, (err, result) => {
         if (!err) {
           resolve(result)
         } else {
@@ -27,7 +27,7 @@ const location = {
   },
   insertLocation: (loc) => {
     return new Promise((resolve, reject) => {
-      connection.query('INSERT INTO cinema_location SET ?', loc, (err, result) => {
+      connection.query('INSERT INTO cinemas SET ?', loc, (err, result) => {
         if (!err) {
           resolve(result)
         } else {
@@ -38,7 +38,7 @@ const location = {
   },
   updateLocation: (id, loc) => {
     return new Promise((resolve, reject) => {
-      connection.query('UPDATE cinema_location SET ? WHERE location_Id = ?', [loc, id], (err, result) => {
+      connection.query('UPDATE cinemas SET ? WHERE location_Id = ?', [loc, id], (err, result) => {
         if (!err) {
           resolve(result)
         } else {
@@ -49,7 +49,7 @@ const location = {
   },
   deleteLocation: (id) => {
     return new Promise((resolve, reject) => {
-      connection.query('DELETE FROM cinema_location WHERE location_Id = ?', id, (err, result) => {
+      connection.query('DELETE FROM cinemas WHERE location_Id = ?', id, (err, result) => {
         if (!err) {
           resolve(result)
         } else {

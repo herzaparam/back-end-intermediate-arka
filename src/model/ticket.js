@@ -37,13 +37,25 @@ const ticket = {
       })
     })
   },
-  insertTicket: (tick) => {
+  insertTicket: (data) => {
     return new Promise((resolve, reject) => {
-      connection.query('INSERT INTO tickets SET ?', tick, (err, result) => {
+      connection.query('INSERT INTO tickets SET ?', data, (err, result) => {
         if (!err) {
           resolve(result)
         } else {
-          reject(err)
+          reject(new Error("Internal server error"))
+        }
+      })
+    })
+  },
+  checkTicket: (data) => {
+    return new Promise((resolve, reject) => {
+      connection.query('SELECT * FROM tickets WHERE userID = ? AND movieID = ? AND cinemasID = ? AND schedule = ? ', [data.userID, data.movieID, data.cinemasID, data.schedule], 
+      (err, result) => {
+        if (!err) {
+          resolve(result)
+        } else {
+          reject(new Error("Internal server error"))
         }
       })
     })

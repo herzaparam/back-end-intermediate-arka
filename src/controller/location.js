@@ -1,13 +1,13 @@
 const locationModel = require('../model/location')
+const helpers = require('../helper/printHelper')
 
 exports.getLocation = (req, res) => {
-  locationModel.getLocation()
+  const city = req.query.city
+  locationModel.getLocation(city)
     .then((result) => {
-      res.json({
-        location: result
-      })
+      helpers.printSuccess(res, 200, "succesfully get cinema", result)
     }).catch((err) => {
-      console.log(err)
+      helpers.printError(res, 500, new Error("Internal server error"))
     })
 }
 exports.getLocationById = (req, res) => {
@@ -18,7 +18,7 @@ exports.getLocationById = (req, res) => {
         location: result
       })
     }).catch((err) => {
-      console.log(err)
+      helpers.printError(res, 500, new Error("Internal server error"))
     })
 }
 exports.insertLocation = (req, res) => {
@@ -35,7 +35,7 @@ exports.insertLocation = (req, res) => {
         location: result
       })
     }).catch((err) => {
-      console.log(err)
+      helpers.printError(res, 500, new Error("Internal server error"))
     })
 }
 exports.updateLocation = (req, res) => {
@@ -53,7 +53,7 @@ exports.updateLocation = (req, res) => {
         location: result
       })
     }).catch((err) => {
-      console.log(err)
+      helpers.printError(res, 500, new Error("Internal server error"))
     })
 }
 exports.deleteLocation = (req, res) => {
@@ -64,6 +64,6 @@ exports.deleteLocation = (req, res) => {
         location: result
       })
     }).catch((err) => {
-      console.log(err)
+      helpers.printError(res, 500, new Error("Internal server error"))
     })
 }
