@@ -41,7 +41,14 @@ const ticket = {
     return new Promise((resolve, reject) => {
       connection.query('INSERT INTO tickets SET ?', data, (err, result) => {
         if (!err) {
-          resolve(result)
+          connection.query("SELECT * FROM tickets WHERE userID = ? AND movieID = ? AND cinemasID = ? AND schedule = ? AND time = ? AND seat = ? ", [data.userID, data.movieID, data.cinemasID, data.schedule, data.time, data.seat],
+          (err,resultShow)=>{
+            if(!err){
+              resolve(resultShow)
+            } else{
+              reject(new Error("Internal server error"))
+            }
+          })
         } else {
           reject(new Error("Internal server error"))
         }
@@ -50,14 +57,14 @@ const ticket = {
   },
   checkTicket: (data) => {
     return new Promise((resolve, reject) => {
-      connection.query('SELECT * FROM tickets WHERE userID = ? AND movieID = ? AND cinemasID = ? AND schedule = ? ', [data.userID, data.movieID, data.cinemasID, data.schedule], 
-      (err, result) => {
-        if (!err) {
-          resolve(result)
-        } else {
-          reject(new Error("Internal server error"))
-        }
-      })
+      connection.query('SELECT * FROM tickets WHERE userID = ? AND movieID = ? AND cinemasID = ? AND schedule = ? ', [data.userID, data.movieID, data.cinemasID, data.schedule],
+        (err, result) => {
+          if (!err) {
+            resolve(result)
+          } else {
+            reject(new Error("Internal server error"))
+          }
+        })
     })
   },
   updateTicket: (id, ticket) => {
@@ -74,6 +81,18 @@ const ticket = {
   deleteTicket: (id) => {
     return new Promise((resolve, reject) => {
       connection.query('DELETE FROM tickets WHERE order_Id = ?', id, (err, result) => {
+        if (!err) {
+          resolve(result)
+        } else {
+          reject(err)
+        }
+      })
+    })
+  },
+  getTicketResult: (orderID, userID) => {
+    return new Promise((resolve, reject) => {
+      connection.query('SELECT * FROM tickets WHERE userID = ? AND order_Id = ?', [userID, orderID], 
+      (err, result) => {
         if (!err) {
           resolve(result)
         } else {

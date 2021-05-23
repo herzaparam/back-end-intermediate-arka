@@ -49,10 +49,10 @@ exports.login = async (req, res) => {
     }
     delete user.password
 
-
-    const payload = { email: user.email, role: user.role }
-
+    const payload = { userID: user.user_Id , email: user.email, role: user.role }
+    
     jwt.sign(payload, process.env.SECRET_KEY, { expiresIn: '24h' }, (err, token) => {
+      console.log('jalan');
       user.token = token
       if (payload.role === 1) {
         return helpers.printSuccess(res, 200, 'you are login as admin', result)

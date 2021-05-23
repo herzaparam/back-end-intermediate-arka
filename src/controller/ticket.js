@@ -1,5 +1,8 @@
 const ticketModel = require('../model/ticket')
+const movieModel = require('../model/movie')
 const helpers = require('../helper/printHelper')
+const moment = require('moment')
+moment.locale("id")
 
 exports.getTicket = (req, res) => {
   const sort = req.query.sort
@@ -11,15 +14,15 @@ exports.getTicket = (req, res) => {
       console.log(err)
     })
 }
-exports.getHistoryTicket = (req, res) =>{
+exports.getHistoryTicket = (req, res) => {
   const id = req.params.iduser
   ticketModel.getHistoryTicket(id)
-  .then((result) => {
-    const resultProduct = result
-    helpers.printSuccess(res, 200, "get history succesfull", resultProduct)
-  }).catch((err) => {
-    console.log(err)
-  })
+    .then((result) => {
+      const resultProduct = result
+      helpers.printSuccess(res, 200, "get history succesfull", resultProduct)
+    }).catch((err) => {
+      console.log(err)
+    })
 }
 
 exports.getTicketById = (req, res) => {
@@ -33,11 +36,10 @@ exports.getTicketById = (req, res) => {
     })
 }
 
-exports.insertTicket = async(req, res) => {
-
-  const {  user_Id } = req.body.user
-  const {city, date, btnId, time, totalPrice, selectedSeat, cinemaName} = req.body.order
-  const {movie_Id, title} = req.body.order.films
+exports.insertTicket = async (req, res) => {
+  const { user_Id } = req.body.user
+  const { city, date, btnId, time, totalPrice, selectedSeat, cinemaName } = req.body.order
+  const { movie_Id, title } = req.body.order.films
   const newSeat = JSON.stringify(selectedSeat)
 
   const data = {
@@ -53,8 +55,8 @@ exports.insertTicket = async(req, res) => {
   }
 
   const check = await ticketModel.checkTicket(data)
-  
-  if(check.length > 1){
+
+  if (check.length > 1) {
     return helpers.printError(res, 400, "Can't insert tickets with identical data")
   }
   ticketModel.insertTicket(data)
@@ -94,4 +96,47 @@ exports.deleteTicket = (req, res) => {
     }).catch((err) => {
       console.log(err)
     })
+}
+exports.getTicketResult = async (req, res) => {
+  const idUser = req.userID
+  const orderID = req.params.idorder
+  try {
+    const result = await ticketModel.getTicketResult(orderID, idUser)
+    const {
+      order_Id,
+      userID,
+      movieID,
+      movieTitle,
+      cinemasID,
+      cinemaName,
+      totalPrice,
+      schedule,
+      time,
+      seat } = result[0]
+    const newSeat = JSON.parse(seat)
+    const newDate = moment(schedule).format('LL');
+
+    const resultMovie = await movieModel.getMoviesById(movieID)
+    const { genre } = resultMovie[0]
+
+    const newResult = {
+      order_Id,
+      userID,
+      movieID,
+      movieTitle,
+      cinemasID,
+      cinemaName,
+      totalPrice,
+      newDate,
+      time,
+      newSeat,
+      genre
+    }
+    helpers.printSuccess(res, 200, "get ticket success", newResult)
+
+  } catch {
+    helpers.printError(res, 500, "Internal server error")
+  }
+
+
 }
