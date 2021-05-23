@@ -14,7 +14,7 @@ router
   .post('/login', userController.login)
   .post("/forgot-password", userController.forgotPassword)
   .put("/reset-password", userController.resetPassword)
-  .put('/profile/:iduser', uploadMulter.single('image'), userController.updateUser)
+  .put('/update-profile', verifyAcces, uploadMulter.single('image'), userController.updateUser)
   .delete('/:id', userController.deleteUser)
 
 module.exports = router

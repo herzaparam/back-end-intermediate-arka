@@ -6,16 +6,30 @@ const redis = require('redis')
 const client = redis.createClient(6379)
 
 exports.getAllMovies = (req, res, next) => {
-    moviesModel.getAllMovies()
-        .then((result) => {
+    const { page, perPage } = req.query;
+    const keyword = req.query.keyword ? req.query.keyword : "";
+
+    moviesModel.getAllMovies(page, perPage, keyword)
+        .then(([totalData, totalPage, result, page, perPage]) => {
+            if (result < 1) {
+                helper.printError(res, 404, "movie not found");
+                return;
+            }
             const resultMovies = result
             client.setex("getAllNowMovies", 60 * 60 * 12, JSON.stringify(resultMovies))
-            helpers.printSuccess(res, 200, "Succesfully get all movie", resultMovies)
-
+            helpers.printPaginate(
+                res,
+                200,
+                "Find all movie successfully",
+                totalData,
+                totalPage,
+                result,
+                page,
+                perPage
+            );
         })
         .catch((err) => {
-            const error = new createError.InternalServerError()
-            next(error)
+            helper.printError(res, 500, err.message);
         })
 }
 

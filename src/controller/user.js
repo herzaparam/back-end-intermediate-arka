@@ -6,6 +6,8 @@ const common = require('../helper/common')
 const jwt = require('jsonwebtoken')
 const mail = require('../helper/sendEmail')
 const { NotExtended } = require('http-errors')
+const path = require("path");
+const fs = require("fs");
 
 exports.getUserByToken = (req, res) => {
   const email = req.email
@@ -49,8 +51,8 @@ exports.login = async (req, res) => {
     }
     delete user.password
 
-    const payload = { userID: user.user_Id , email: user.email, role: user.role }
-    
+    const payload = { userID: user.user_Id, email: user.email, role: user.role }
+
     jwt.sign(payload, process.env.SECRET_KEY, { expiresIn: '24h' }, (err, token) => {
       console.log('jalan');
       user.token = token
@@ -68,7 +70,7 @@ exports.login = async (req, res) => {
 exports.register = async (req, res) => {
   let image;
   if (!req.file) {
-    image = "img\\default.png";
+    image = "image/default.png";
   } else {
     image = req.file.path;
   }
@@ -127,25 +129,46 @@ exports.sendEmail = async (req, res) => {
   return helpers.response(res, null, 200, null)
 }
 
-exports.updateUser = (req, res) => {
+exports.updateUser = async (req, res) => {
+  const userId = req.userID
+  const { fname, lname, email, phone_number, image } = req.body
 
-  const userId = req.params.iduser
-  const { fname, lname, email, phone_number } = req.body
-  const user = {
+  const data = {
     fname,
     lname,
     email,
     phone_number,
-    image: `http://localhost:8000/img/${req.file.filename}`
+    image
   }
-  userModel.updateUser(userId, user)
+
+  userModel
+    .getUserById(userId)
     .then((result) => {
-      res.json({
-        user: result
-      })
-    }).catch((err) => {
-      return helpers.printError(res, 500, 'Internal server error')
+      let image;
+      if (!req.file) {
+        image = result[0].image;
+      } else {
+        const oldImage = result[0].image;
+        if (oldImage !== "image/default.png") {
+          removeImage(oldImage);
+        }
+        image = req.file.path;
+      }
+      data.image = image;
+      console.log(req.file);
+      console.log(data.image);
+      return userModel.updateUser(userId, data);
     })
+    .then((result) => {
+      helpers.printSuccess(res, 200, "Users has been updated", result);
+    })
+    .catch((err) => {
+      if (err.message === "Internal server error") {
+        helpers.printError(res, 500, err.message);
+      }
+      helpers.printError(res, 400, err.message);
+    });
+
 }
 
 exports.deleteUser = (req, res) => {
@@ -202,7 +225,7 @@ exports.resetPassword = async (req, res) => {
   const email = req.query.email;
   const token = req.query.token;
   const password = req.body.password;
-  
+
   try {
     const user = await userModel.findUser(email);
     if (user < 1) {
@@ -254,7 +277,7 @@ exports.resetPassword = async (req, res) => {
 exports.verify = async (req, res) => {
   const email = req.query.email;
   const token = req.query.token;
-  
+
   try {
     const user = await userModel.findUser(email);
     if (user < 1) {
@@ -297,4 +320,8 @@ exports.verify = async (req, res) => {
   } catch (err) {
     helpers.printError(res, 500, err.message);
   }
+};
+const removeImage = (filePath) => {
+  filePath = path.join(__dirname, "../..", filePath);
+  fs.unlink(filePath, (err) => new Error(err));
 };

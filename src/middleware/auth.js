@@ -24,11 +24,10 @@ const isLoggedIn = (req, res, next) =>{
 
 const verifyAcces = (req, res, next) => {
     const auth = req.headers.authorization
-
     if (!auth) {
         return helpers.response(res, null, 401, { message: 'server need token' })
     }
-    jwt.verify(token, process.env.SECRET_KEY, (err, decoded) => {
+    jwt.verify(auth, process.env.SECRET_KEY, (err, decoded) => {
         if (err) {
             if (err.name === 'JsonWebTokenError') {
                 return helpers.response(res, null, 401, { message: 'invalid signature' })
@@ -41,6 +40,7 @@ const verifyAcces = (req, res, next) => {
         }
         req.email = decoded.email
         req.role = decoded.role
+        req.userID = decoded.userID
         next()
     })
 }

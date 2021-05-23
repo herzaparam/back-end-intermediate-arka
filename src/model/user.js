@@ -77,12 +77,14 @@ const user = {
       });
     });
   },
-  updateUser: (userId, user) => {
+  updateUser: (userId, data) => {
     return new Promise((resolve, reject) => {
-      connection.query('UPDATE user SET ? WHERE user_Id = ?', [user, userId], (err, result) => {
+      connection.query('UPDATE user SET ? WHERE user_Id = ?', [data, userId], (err, result) => {
         if (!err) {
+          console.log(result);
           resolve(result)
         } else {
+          console.log('jalan');
           reject(err)
         }
       })
