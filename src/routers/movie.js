@@ -7,6 +7,7 @@ const { verifyAcces, roleAdmin } = require('../middleware/auth')
 
 router
     .get('/all-movies', moviesController.getAllMovies)
+    .get('/all-sort', moviesController.getAllSort)
     .get('/now-showing', moviesController.getLimNowMovies)
     .get('/now-showing/viewall', cacheAllNowMovies, moviesController.getAllNowMovies)
     .get('/upcoming-movies', moviesController.getLimUpMovies)

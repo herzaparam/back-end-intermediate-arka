@@ -131,6 +131,7 @@ exports.sendEmail = async (req, res) => {
 
 exports.updateUser = async (req, res) => {
   const userId = req.userID
+  
   const { fname, lname, email, phone_number, image } = req.body
 
   const data = {

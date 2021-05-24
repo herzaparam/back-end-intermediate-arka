@@ -41,6 +41,7 @@ const verifyAcces = (req, res, next) => {
         req.email = decoded.email
         req.role = decoded.role
         req.userID = decoded.userID
+
         next()
     })
 }

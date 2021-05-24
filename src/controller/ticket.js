@@ -14,6 +14,38 @@ exports.getTicket = (req, res) => {
       console.log(err)
     })
 }
+
+exports.getUserTicket = (req, res) => {
+  const userID = req.userID
+
+  ticketModel.getUserTicket(userID)
+    .then((result) => {
+       let newResult = result.map((d)=>{
+          return {
+            order_Id: d.order_Id,
+            userID: d.userId,
+            movieID: d.movieID,
+            movieTitle: d.movieTitle,
+            cinemasID: d.cinemasID,
+            cinemaName: d.cinemaName,
+            totalPrice: d.totalPrice,
+            schedule: moment(d.schedule).format('LL'),
+            time: d.time,
+            seat: d.seat,
+            id: d.id,
+            name: d.name,
+            image: d.image,
+            address: d.address,
+            price: d.price,
+            cityID: d.cityID
+        }
+        })
+      helpers.printSuccess(res, 200, "get ticket by user succesfull", newResult)
+    }).catch((err) => {
+      helpers.printError(res, 500, "internal server error")
+    })
+}
+
 exports.getHistoryTicket = (req, res) => {
   const id = req.params.iduser
   ticketModel.getHistoryTicket(id)

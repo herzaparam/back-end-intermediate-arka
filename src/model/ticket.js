@@ -12,6 +12,17 @@ const ticket = {
       })
     })
   },
+  getUserTicket: (userID) => {
+    return new Promise((resolve, reject) => {
+      connection.query(`SELECT *, cinemas.image FROM tickets INNER JOIN cinemas ON tickets.cinemasID = cinemas.id WHERE userID = ?`, userID, (err, result) => {
+        if (!err) {
+          resolve(result)
+        } else {
+          reject(err)
+        }
+      })
+    })
+  },
   getHistoryTicket: (id) => {
     return new Promise((resolve, reject) => {
       connection.query(`SELECT tickets.order_Id, user.fname, movie_details.title, cinema_location.cinema, time_stamp, seat FROM tickets INNER JOIN user ON tickets.user_Id = user.user_Id INNER JOIN movie_details ON tickets.movie_Id = movie_details.movie_Id INNER JOIN cinema_location ON tickets.location_Id = cinema_location.location_Id WHERE user.user_Id = ${id} `, (err, result) => {

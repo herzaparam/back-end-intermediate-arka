@@ -12,24 +12,49 @@ exports.getAllMovies = (req, res, next) => {
     moviesModel.getAllMovies(page, perPage, keyword)
         .then(([totalData, totalPage, result, page, perPage]) => {
             if (result < 1) {
-                helper.printError(res, 404, "movie not found");
+                helpers.printError(res, 404, "movie not found");
                 return;
             }
             const resultMovies = result
-            client.setex("getAllNowMovies", 60 * 60 * 12, JSON.stringify(resultMovies))
             helpers.printPaginate(
                 res,
                 200,
                 "Find all movie successfully",
                 totalData,
                 totalPage,
-                result,
+                resultMovies,
                 page,
                 perPage
             );
         })
         .catch((err) => {
-            helper.printError(res, 500, err.message);
+            helpers.printError(res, 500, err.message);
+        })
+}
+exports.getAllSort = (req, res, next) => {
+    const {page, perPage} = req.query ;
+    const { category, genre } = req.query;
+   
+    moviesModel.getAllSort(page, perPage, category, genre)
+        .then(([totalData, totalPage, result, page, perPage]) => {
+            if (result < 1) {
+                helpers.printError(res, 404, "movie not found");
+                return;
+            }
+            const resultMovies = result
+            helpers.printPaginate(
+                res,
+                200,
+                "Find all movie successfully",
+                totalData,
+                totalPage,
+                resultMovies,
+                page,
+                perPage
+            );
+        })
+        .catch((err) => {
+            helpers.printError(res, 500, err.message);
         })
 }
 
