@@ -6,6 +6,7 @@ const { verifyAcces, isLoggedIn } = require('../middleware/auth')
 router
   // .get('/', ticketController.getTicket)
   .get('/:iduser', ticketController.getHistoryTicket)
+  .post('/get-schedule', ticketController.getSchedule)
   .post('/ticket-user', isLoggedIn, ticketController.getUserTicket)
   .post('/ticket-result/:idorder', isLoggedIn, ticketController.getTicketResult)
   // .get('/:id', ticketController.getTicketById)

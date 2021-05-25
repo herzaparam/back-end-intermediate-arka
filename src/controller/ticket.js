@@ -15,31 +15,50 @@ exports.getTicket = (req, res) => {
     })
 }
 
+exports.getSchedule = (req, res) => {
+  const { cinemaID, movieID, date, time } = req.body
+  
+
+  const data = {
+    cinemaID,
+    movieID,
+    date,
+    time
+  }
+
+  ticketModel.getSchedule(data)
+    .then((result) => {
+      helpers.printSuccess(res, 200, "get ticket schedule succesfull", result)
+    }).catch((err) => {
+      helpers.printError(res, 500, "internal server error")
+    })
+}
+
 exports.getUserTicket = (req, res) => {
   const userID = req.userID
 
   ticketModel.getUserTicket(userID)
     .then((result) => {
-       let newResult = result.map((d)=>{
-          return {
-            order_Id: d.order_Id,
-            userID: d.userId,
-            movieID: d.movieID,
-            movieTitle: d.movieTitle,
-            cinemasID: d.cinemasID,
-            cinemaName: d.cinemaName,
-            totalPrice: d.totalPrice,
-            schedule: moment(d.schedule).format('LL'),
-            time: d.time,
-            seat: d.seat,
-            id: d.id,
-            name: d.name,
-            image: d.image,
-            address: d.address,
-            price: d.price,
-            cityID: d.cityID
+      let newResult = result.map((d) => {
+        return {
+          order_Id: d.order_Id,
+          userID: d.userId,
+          movieID: d.movieID,
+          movieTitle: d.movieTitle,
+          cinemasID: d.cinemasID,
+          cinemaName: d.cinemaName,
+          totalPrice: d.totalPrice,
+          schedule: moment(d.schedule).format('LL'),
+          time: d.time,
+          seat: d.seat,
+          id: d.id,
+          name: d.name,
+          image: d.image,
+          address: d.address,
+          price: d.price,
+          cityID: d.cityID
         }
-        })
+      })
       helpers.printSuccess(res, 200, "get ticket by user succesfull", newResult)
     }).catch((err) => {
       helpers.printError(res, 500, "internal server error")
@@ -72,6 +91,7 @@ exports.insertTicket = async (req, res) => {
   const { user_Id } = req.body.user
   const { city, date, btnId, time, totalPrice, selectedSeat, cinemaName } = req.body.order
   const { movie_Id, title } = req.body.order.films
+  
   const newSeat = JSON.stringify(selectedSeat)
 
   const data = {
@@ -82,6 +102,7 @@ exports.insertTicket = async (req, res) => {
     cinemaName: cinemaName,
     totalPrice: totalPrice,
     schedule: date,
+    date: date,
     time: time,
     seat: newSeat,
   }
