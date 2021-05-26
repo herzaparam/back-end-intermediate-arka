@@ -107,11 +107,7 @@ exports.insertTicket = async (req, res) => {
     seat: newSeat,
   }
 
-  const check = await ticketModel.checkTicket(data)
-
-  if (check.length > 1) {
-    return helpers.printError(res, 400, "Can't insert tickets with identical data")
-  }
+ 
   ticketModel.insertTicket(data)
     .then((result) => {
       helpers.printSuccess(res, 200, "insert ticket succesfull", result)

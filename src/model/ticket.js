@@ -79,18 +79,6 @@ const ticket = {
       })
     })
   },
-  checkTicket: (data) => {
-    return new Promise((resolve, reject) => {
-      connection.query('SELECT * FROM tickets WHERE userID = ? AND movieID = ? AND cinemasID = ? AND schedule = ? ', [data.userID, data.movieID, data.cinemasID, data.schedule],
-        (err, result) => {
-          if (!err) {
-            resolve(result)
-          } else {
-            reject(new Error("Internal server error"))
-          }
-        })
-    })
-  },
   updateTicket: (id, ticket) => {
     return new Promise((resolve, reject) => {
       connection.query('UPDATE tickets SET ? WHERE order_Id = ?', [ticket, id], (err, result) => {
