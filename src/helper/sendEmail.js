@@ -1,6 +1,6 @@
 const nodemailer = require("nodemailer");
 const smtpTransport = require("nodemailer-smtp-transport");
-const link = `https://tickitz-movie.netlify.app`;
+const link = `https://tickitz-arka-apps.netlify.app`;
 const email = process.env.USER_EMAIL;
 const password = process.env.PASSWORD_EMAIL;
 
