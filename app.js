@@ -22,14 +22,23 @@ app.use('*', (req, res, next) => {
     next(error)
 })
 app.use((err, req, res, next) => {
-    if (!err.status) {
-        err.status = 500
-    }
-    res.json({
+    if (err.message === "Uploaded file must be png, jpg or jpeg file") {
+      res.status(400).send({
+        status: false,
         message: err.message,
-        status_error: err.status
-    })
-})
+      });
+    } else if (err.code === "LIMIT_FILE_SIZE") {
+      res.status(400).send({
+        status: false,
+        message: "File image too large",
+      });
+    } else {
+      res.status(404).send({
+        status: false,
+        message: err.message,
+      });
+    }
+  });
 
 app.listen(port, () => {
     console.log('server is running port ' + port)

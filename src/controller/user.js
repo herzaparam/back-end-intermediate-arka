@@ -156,14 +156,13 @@ exports.updateUser = async (req, res) => {
         image = req.file.path;
       }
       data.image = image;
-      console.log(req.file);
-      console.log(data.image);
       return userModel.updateUser(userId, data);
     })
     .then((result) => {
       helpers.printSuccess(res, 200, "Users has been updated", result);
     })
     .catch((err) => {
+      console.log(err.message);
       if (err.message === "Internal server error") {
         helpers.printError(res, 500, err.message);
       }

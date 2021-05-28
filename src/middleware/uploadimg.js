@@ -16,8 +16,8 @@ const upload = multer({
         if (file.mimetype == "image/png" || file.mimetype == "image/jpg" || file.mimetype == "image/jpeg") {
             cb(null, true);
         } else {
-            cb(null, false)
-            return cb(new Error('only .png, .jpg, .jpeg type allowed '))
+            const err = new Error("Uploaded file must be png, jpg or jpeg file");
+            cb(err, false)
         }
     },
     limits: { fileSize: maxSize }
