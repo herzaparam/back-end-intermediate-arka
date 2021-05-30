@@ -11,7 +11,7 @@ exports.getTicket = (req, res) => {
       const resultProduct = result
       helpers.printSuccess(res, resultProduct, 200)
     }).catch((err) => {
-      console.log(err)
+      helpers.printError(res, 500, "internal server error")
     })
 }
 
@@ -72,7 +72,7 @@ exports.getHistoryTicket = (req, res) => {
       const resultProduct = result
       helpers.printSuccess(res, 200, "get history succesfull", resultProduct)
     }).catch((err) => {
-      console.log(err)
+      helpers.printError(res, 500, "internal server error")
     })
 }
 
@@ -83,7 +83,7 @@ exports.getTicketById = (req, res) => {
       const resultProduct = result
       helpers.printSuccess(res, 200, "get ticket by id succesfull", resultProduct)
     }).catch((err) => {
-      console.log(err)
+      helpers.printError(res, 500, "internal server error")
     })
 }
 
@@ -133,7 +133,7 @@ exports.updateTicket = (req, res) => {
       const resultProduct = result
       helpers.printSuccess(res, 200, "update ticket succesfull", resultProduct)
     }).catch((err) => {
-      console.log(err)
+      helpers.printError(res, 500, "internal server error")
     })
 }
 exports.deleteTicket = (req, res) => {
@@ -143,7 +143,7 @@ exports.deleteTicket = (req, res) => {
       const resultProduct = result
       helpers.printSuccess(res, 200, "delete ticket succesfull", resultProduct)
     }).catch((err) => {
-      console.log(err)
+      helpers.printError(res, 500, "internal server error")
     })
 }
 exports.getTicketResult = async (req, res) => {

@@ -3,13 +3,21 @@ const connection = require('../config/db')
 const location = {
   getLocation: (city) => {
     return new Promise((resolve, reject) => {
-      connection.query('SELECT cinemas.id, cinemas.name, cinemas.image, cinemas.address, cinemas.address, cinemas.price, cities.name AS cityName FROM cinemas iNNER JOIN cities ON cinemas.cityID = cities.id WHERE cities.name = ? ', city ,(err, result) => {
-        if (!err) {
-          resolve(result)
-        } else {
-          reject(err)
-        }
-      })
+      connection.query('SELECT id FROM cities WHERE name = ?', city,
+        (err, resultCity) => {
+          if (!err) {
+            connection.query(`SELECT * FROM cinemas WHERE cityID = ?`, resultCity[0].id,
+              (err, result) => {
+                if (!err) {
+                  resolve(result)
+                } else {  
+                  reject(new Error("Internal Server Error"))
+                }
+              })
+          } else {
+            reject(err)
+          }
+        })
     })
   },
   getLocationById: (id) => {

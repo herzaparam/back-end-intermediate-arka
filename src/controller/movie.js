@@ -4,6 +4,8 @@ const helpers = require('../helper/printHelper')
 const { v4: uuidv4 } = require('uuid')
 const redis = require('redis')
 const client = redis.createClient(6379)
+const moment = require('moment')
+moment.locale("id")
 
 exports.getAllMovies = (req, res, next) => {
     const { page, perPage } = req.query;
@@ -32,9 +34,9 @@ exports.getAllMovies = (req, res, next) => {
         })
 }
 exports.getAllSort = (req, res, next) => {
-    const {page, perPage} = req.query ;
+    const { page, perPage } = req.query;
     const { category, genre } = req.query;
-   
+
     moviesModel.getAllSort(page, perPage, category, genre)
         .then(([totalData, totalPage, result, page, perPage]) => {
             if (result < 1) {
@@ -120,28 +122,53 @@ exports.getMoviesById = (req, res, next) => {
 
 
 exports.insertMovies = (req, res, next) => {
-    const { title, date_show, genre, movie_duration, directed_by, casts, Synopsis, price } = req.body
-    const detail = {
-        movie_Id: uuidv4(),
-        title,
-        date_show,
-        genre,
-        movie_duration,
-        directed_by,
-        casts,
-        Synopsis,
-        price,
-        image: `http://localhost:8000/img/${req.file.filename}`
+    let image;
+    if (!req.file) {
+        helpers.printError(res, 400, new Error("bad request / need image "))
+    } else {
+        image = `https://tickitz-azreh.fwdev.online/${req.file.path}`
     }
-    moviesModel.insertMovies(detail)
-        .then((result) => {
-            const resultProduct = result
-            helpers.printSuccess(res, 200, "Succesfully get all movie", resultProduct)
+    const { title, genre, releaseDate, hour, minute, dateShow, director, casts, synopsis, cinemaID, cityID, date, time } = req.body
+    const page = 1
+    const perPage = 100
+    const keyword = title
+
+    const data = {
+        title,
+        genre,
+        movie_duration: `${hour}:${minute}`,
+        directed_by: director,
+        casts,
+        Synopsis: synopsis,
+        date_show: 'now',
+        cinemaID,
+        cityID,
+        date,
+        time,
+        image
+    }
+
+    moviesModel
+        .getAllMovies(page, perPage, keyword)
+        .then(async ([totalData, totalPage, result, page, perPage]) => {
+            if (result.length > 1) {
+                helpers.printError((res, 400, new Error("bad request/same movie title")))
+            }
+            const resSchedule = await moviesModel.insertSchedule(data)
+            data.scheduleID = resSchedule.insertId
+            
+            moviesModel.insertMovies(data)
+            .then((result)=>{
+                helpers.printSuccess(res, 200, "Succesfully insert this movie", result)
+            })
+            .catch((err)=>{
+                helpers.printError(res, 500, err.message)
+            })
         })
         .catch((err) => {
-            const error = new createError.InternalServerError()
-            next(error)
+            helpers.printError(res, 500, err.message)
         })
+
 }
 
 exports.updateMovies = (req, res, next) => {

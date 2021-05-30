@@ -23,7 +23,7 @@ const isLoggedIn = (req, res, next) =>{
 }
 
 const verifyAcces = (req, res, next) => {
-    const auth = req.headers.authorization
+    const auth = req.headers.authorization 
     if (!auth) {
         return helpers.response(res, null, 401, { message: 'server need token' })
     }
@@ -47,7 +47,7 @@ const verifyAcces = (req, res, next) => {
 }
 
 const roleAdmin = (req, res, next) => {
-    if (req.role !== 'admin') {
+    if (req.role !== 1) {
         return helpers.response(res, null, 401, { message: 'you need to login as admin to acces this page' })
     }
     next()

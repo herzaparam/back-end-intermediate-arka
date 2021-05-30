@@ -123,15 +123,29 @@ const movies = {
         })
     },
 
-    insertMovies: (detail) => {
+    insertMovies: (data) => {
         return new Promise((resolve, reject) => {
-            connection.query('INSERT INTO movie_details SET ?', detail, (err, result) => {
-                if (!err) {
-                    resolve(result)
-                } else {
-                    reject(err)
-                }
-            })
+            connection.query('INSERT INTO movie_details (date_show, title, genre, movie_duration, directed_by, casts, Synopsis, image, scheduleID) VALUES (?,?,?,?,?,?,?,?,?)',
+                [data.date_show, data.title, data.genre, data.movie_duration, data.directed_by, data.casts, data.Synopsis, data.image, data.scheduleID],
+                (err, result) => {
+                    if (!err) {
+                        resolve(result)
+                    } else {
+                        reject(err)
+                    }
+                })
+        })
+    },
+    insertSchedule: (data) => {
+        return new Promise((resolve, reject) => {
+            connection.query('INSERT INTO schedule (date, dateStr, time) VALUES (?,?,?)', [data.date, data.date, data.time],
+                (err, result) => {
+                    if (!err) {
+                        resolve(result)
+                    } else {
+                        reject(new Error("Internal server error"))
+                    }
+                })
         })
     },
     updateMovies: (id, data) => {

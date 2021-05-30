@@ -19,7 +19,7 @@ exports.getUserByToken = (req, res) => {
         user: user
       })
     }).catch((err) => {
-      console.log(err)
+      helpers.printError(res, 500, "internal server error")
     })
 }
 
@@ -33,7 +33,7 @@ exports.getUserById = (req, res) => {
         user: user
       })
     }).catch((err) => {
-      console.log(err)
+      helpers.printError(res, 500, "internal server error")
     })
 }
 
@@ -54,7 +54,6 @@ exports.login = async (req, res) => {
     const payload = { userID: user.user_Id, email: user.email, role: user.role }
 
     jwt.sign(payload, process.env.SECRET_KEY, { expiresIn: '24h' }, (err, token) => {
-      console.log('jalan');
       user.token = token
       if (payload.role === 1) {
         return helpers.printSuccess(res, 200, 'you are login as admin', result)
@@ -162,7 +161,6 @@ exports.updateUser = async (req, res) => {
       helpers.printSuccess(res, 200, "Users has been updated", result);
     })
     .catch((err) => {
-      console.log(err.message);
       if (err.message === "Internal server error") {
         helpers.printError(res, 500, err.message);
       }

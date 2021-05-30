@@ -13,7 +13,7 @@ router
     .get('/upcoming-movies', moviesController.getLimUpMovies)
     .get('/upcoming-movies/viewall', cacheAllUpMovies, moviesController.getAllUpMovies)
     .get('/:id', moviesController.getMoviesById)
-    .post('/', verifyAcces, roleAdmin, uploadMulter.single('image'), moviesController.insertMovies)
+    .post('/insert-schedule', verifyAcces, roleAdmin, uploadMulter.single('image'), moviesController.insertMovies)
     .put('/:id', verifyAcces, roleAdmin, uploadMulter.single('image'), moviesController.updateMovies)
     .delete('/:id', verifyAcces, roleAdmin, moviesController.deleteMovies)
 
